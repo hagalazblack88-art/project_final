@@ -1,0 +1,66 @@
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, func
+from sqlalchemy.orm import relationship
+from fastapi_users.db import SQLAlchemyBaseUserTable
+from app.database import Base
+
+
+class User(SQLAlchemyBaseUserTable[int], Base):
+    __tablename__ = "users"
+    
+    # Базовый класс уже добавляет:
+    # id: int (PK), email: str (unique), hashed_password: str,
+    # is_active: bool, is_superuser: bool, is_verified: bool
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), unique=True, index=True, nullable=False, default='first')
+    
+    posts = relationship("Post", back_populates="author", cascade="all, delete-orphan")
+    comments = relationship("Comment", back_populates="author")
+    # 🔥 НОВОЕ: сообщества, которыми владеет пользователь
+    owned_groups = relationship("Group", back_populates="owner")
+
+
+class Group(Base):
+    __tablename__ = "groups"
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    slug = Column(String, unique=True, nullable=False, index=True)
+    description = Column(Text)
+    # 🔥 НОВОЕ: владелец сообщества
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    
+    posts = relationship("Post", back_populates="group")
+    # 🔥 НОВОЕ: связь с владельцем
+    owner = relationship("User", back_populates="owned_groups")
+
+
+class Post(Base):
+    __tablename__ = "posts"
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(Text, nullable=False)
+    pub_date = Column(DateTime, server_default=func.now())
+    author_id = Column(Integer, ForeignKey("users.id"), index=True)
+    group_id = Column(Integer, ForeignKey("groups.id"), nullable=True, index=True)
+    image = Column(String, nullable=True)  # Хранит путь к файлу
+    
+    author = relationship("User", back_populates="posts")
+    group = relationship("Group", back_populates="posts")
+    comments = relationship("Comment", back_populates="post", cascade="all, delete-orphan")
+
+
+class Comment(Base):
+    __tablename__ = "comments"
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String(300), nullable=False)
+    pub_date = Column(DateTime, server_default=func.now())
+    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False, index=True)
+    author_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    
+    post = relationship("Post", back_populates="comments")
+    author = relationship("User", back_populates="comments")
+
+
+class Follow(Base):
+    __tablename__ = "follows"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    author_id = Column(Integer, ForeignKey("users.id"))

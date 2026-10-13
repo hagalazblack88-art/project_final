@@ -1,0 +1,310 @@
+/* ============================================
+   🎨 БАЗОВЫЕ ПЕРЕМЕННЫЕ (Светлая тема по умолчанию)
+   ============================================ */
+:root {
+  --bg: #ffffff;
+  --social-bg: #f0f2f5; /* Светло-серый для фона страницы */
+  --border: #e1e3e6;
+  --text-h: #000000; /* Основной текст (заголовки) */
+  --text: #818c99; /* Вторичный текст */
+  --accent: #0077FF; /* Акцентный синий, как в VK */
+  --accent-bg: #e5f1ff;
+  --accent-border: #b3d7ff;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --sans: -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', 
+          Geneva, "Noto Sans Armenian", "Noto Sans Bengali", 
+          "Noto Sans Cherokee", "Noto Sans Devanagari", 
+          "Noto Sans Ethiopic", "Noto Sans Georgian", 
+          "Noto Sans Hebrew", "Noto Sans Kannada", 
+          "Noto Sans Khmer", "Noto Sans Lao", 
+          "Noto Sans Osmanya", "Noto Sans Tamil", 
+          "Noto Sans Telugu", "Noto Sans Thai", sans-serif;
+}
+
+/* ============================================
+   🌙 ТЁМНАЯ ТЕМА (автоматически по системным настройкам)
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #19191a;
+    --social-bg: #222224;
+    --border: #333336;
+    --text-h: #e1e3e6;
+    --text: #818c99;
+    --accent: #529ced;
+    --accent-bg: #2b3a4d;
+    --accent-border: #3a5a7f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ============================================
+   📐 ГЛОБАЛЬНЫЕ СТИЛИ
+   ============================================ */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--social-bg);
+  color: var(--text-h);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Убираем стандартные стили ссылок */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Плавная прокрутка для всей страницы */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ============================================
+   💬 КОММЕНТАРИИ В ЛЕНТЕ (мини-комментарии)
+   ============================================ */
+.mini-comment-wrapper {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-h);
+  padding: 4px 0;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.mini-comment-wrapper:hover {
+  background: var(--social-bg);
+}
+
+.mini-comment-wrapper:hover .mini-delete-btn {
+  opacity: 1 !important;
+}
+
+.mini-delete-btn {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 6px;
+  line-height: 1;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.mini-delete-btn:hover {
+  color: #dc2626;
+  transform: scale(1.1);
+}
+
+/* ============================================
+   💬 КОММЕНТАРИИ-БАБЛЫ (в детальном просмотре поста)
+   ============================================ */
+.comment-bubble {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 4px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.comment-bubble:hover {
+  background: var(--social-bg);
+}
+
+.comment-bubble:hover .delete-comment-icon {
+  opacity: 1 !important;
+}
+
+.delete-comment-icon {
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: #ef4444;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 22px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-comment-icon:hover {
+  color: #dc2626;
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* ============================================
+   ⋮ ВЫПАДАЮЩЕЕ МЕНЮ ПОСТА (три точки)
+   ============================================ */
+.post-menu-wrapper {
+  position: relative;
+}
+
+.post-menu-btn {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-menu-btn:hover {
+  background: var(--social-bg);
+  color: var(--text-h);
+}
+
+.post-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+  min-width: 180px;
+  overflow: hidden;
+  animation: dropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post-dropdown-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-h);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.post-dropdown-item:hover {
+  background: var(--social-bg);
+}
+
+.post-dropdown-item.delete {
+  color: #ef4444;
+}
+
+.post-dropdown-item.delete:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* ============================================
+   🧭 САЙДБАР (левое меню)
+   ============================================ */
+aside a:not([style*="background"]):hover {
+  background-color: var(--border) !important;
+}
+
+aside button:hover {
+  background-color: var(--border) !important;
+}
+
+/* ============================================
+   🃏 КАРТОЧКИ (посты, комментарии)
+   ============================================ */
+/* Эффект наведения на карточку поста в ленте */
+.clickable-card {
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.clickable-card:hover {
+  background: var(--social-bg);
+  box-shadow: var(--shadow);
+}
+
+/* ============================================
+   🎯 УТИЛИТЫ И АНИМАЦИИ
+   ============================================ */
+/* Плавное появление элементов */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Скроллбар для тёмной темы */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--social-bg);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #444;
+  }
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  aside {
+    display: none; /* На мобильных скрываем сайдбар */
+  }
+}
