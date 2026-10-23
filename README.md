@@ -41,3 +41,6 @@
    ```bash
    git clone https://github.com/hagalazblack88-art/project_final.git
    cd project_final
+   Основной сайт: 👉 http://localhost
+   API документация (Swagger): 👉 http://localhost:8000/docs
+   GitHub репозиторий: 👉 https://github.com/hagalazblack88-art/project_final
