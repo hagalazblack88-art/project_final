@@ -21,10 +21,14 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const { username } = useParams<{ username: string }>();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -37,6 +41,7 @@ export default function ProfilePage() {
           const data = await response.json();
           setProfile(data);
           setIsFollowing(data.is_following);
+          setNewUsername(data.author.username); // Инициализируем поле ввода текущим именем
         }
       } catch (error) {
         console.error('Ошибка загрузки профиля:', error);
@@ -47,10 +52,49 @@ export default function ProfilePage() {
     fetchProfile();
   }, [username]);
 
+  const handleSaveUsername = async () => {
+    if (!newUsername.trim() || newUsername === profile?.author.username) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await fetch(`${API_URL}/users/me`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: newUsername }),
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        // Обновляем локальное состояние профиля
+        setProfile(prev => prev ? {
+          ...prev,
+          author: { ...prev.author, username: newUsername }
+        } : null);
+        
+        // Обновляем глобальное состояние пользователя (чтобы имя сменилось в сайдбаре)
+        if (user) {
+          updateUser({ ...user, username: newUsername });
+        }
+        
+        setIsEditing(false);
+      } else {
+        const err = await response.json();
+        alert(`Ошибка: ${err.detail || 'Не удалось сохранить имя'}`);
+      }
+    } catch (error) {
+      console.error('Ошибка при сохранении имени:', error);
+      alert('Произошла ошибка сети');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleToggleFollow = async () => {
     if (!username) return;
     
-    // 🔥 Используем твой существующий эндпоинт /profile/{username}/follow/
     const method = isFollowing ? 'DELETE' : 'POST';
     try {
       const response = await fetch(`${API_URL}/profile/${username}/follow/`, {
@@ -59,7 +103,6 @@ export default function ProfilePage() {
       });
 
       if (response.ok) {
-        // Мгновенно обновляем состояние кнопки без перезагрузки
         setIsFollowing(!isFollowing);
       }
     } catch (error) {
@@ -86,7 +129,41 @@ export default function ProfilePage() {
             {profile.author.username.substring(0, 2).toUpperCase()}
           </div>
           <div style={styles.profileInfo}>
-            <h1 style={styles.profileName}>{profile.author.username}</h1>
+            
+            {/* Логика отображения: либо режим редактирования, либо имя с карандашом */}
+            {isEditing ? (
+              <div style={styles.editContainer}>
+                <input
+                  type="text"
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
+                  style={styles.usernameInput}
+                  maxLength={20}
+                  autoFocus
+                />
+                <div style={styles.editActions}>
+                  <button onClick={handleSaveUsername} disabled={isSaving} style={styles.saveBtn}>
+                    {isSaving ? '...' : 'Сохранить'}
+                  </button>
+                  <button 
+                    onClick={() => { setIsEditing(false); setNewUsername(profile.author.username); }} 
+                    style={styles.cancelBtn}
+                  >
+                    Отмена
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={styles.nameContainer}>
+                <h1 style={styles.profileName}>{profile.author.username}</h1>
+                {isOwnProfile && (
+                  <button onClick={() => setIsEditing(true)} style={styles.editBtn} title="Изменить имя">
+                    ✏️
+                  </button>
+                )}
+              </div>
+            )}
+
             <p style={styles.profileUsername}>@{profile.author.username}</p>
             
             <div style={styles.profileStats}>
@@ -96,7 +173,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* 🔥 Кнопка подписки (не показываем на собственном профиле) */}
+            {/* Кнопка подписки (не показываем на собственном профиле) */}
             {!isOwnProfile && (
               <button 
                 onClick={handleToggleFollow} 
@@ -165,7 +242,52 @@ const styles: Record<string, React.CSSProperties> = {
     flexShrink: 0
   },
   profileInfo: { flex: 1, paddingTop: '8px' },
-  profileName: { fontSize: '24px', fontWeight: '700', color: 'var(--text-h)', margin: '0 0 4px 0' },
+  
+  nameContainer: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' },
+  editContainer: { marginBottom: '4px' },
+  usernameInput: {
+    padding: '8px 12px',
+    fontSize: '24px',
+    fontWeight: '700',
+    borderRadius: '8px',
+    border: '2px solid var(--accent)',
+    background: 'var(--bg)',
+    color: 'var(--text-h)',
+    width: '250px',
+    outline: 'none'
+  },
+  editActions: { display: 'flex', gap: '8px', marginTop: '8px' },
+  saveBtn: {
+    padding: '6px 16px',
+    background: 'var(--accent)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    fontSize: '14px'
+  },
+  cancelBtn: {
+    padding: '6px 16px',
+    background: 'transparent',
+    color: 'var(--text)',
+    border: '1px solid var(--border)',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontWeight: '600',
+    fontSize: '14px'
+  },
+  editBtn: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '20px',
+    padding: '4px',
+    borderRadius: '4px',
+    transition: 'background 0.2s',
+  },
+
+  profileName: { fontSize: '24px', fontWeight: '700', color: 'var(--text-h)', margin: 0 },
   profileUsername: { fontSize: '15px', color: 'var(--text)', margin: '0 0 16px 0' },
   profileStats: { display: 'flex', gap: '24px', marginBottom: '20px' },
   statItem: { display: 'flex', flexDirection: 'column' },
