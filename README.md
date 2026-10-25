@@ -42,21 +42,27 @@
    git clone https://github.com/hagalazblack88-art/project_final.git
    cd project_final
 2. **Настройте переменные окружения:**
-   Создайте в корневой папке файл .env и добавьте в него следующие строки:
+   создайте в корневой папке файл .env и добавьте в него следующие строки:
    ```env
    DATABASE_URL=sqlite+aiosqlite:///./data/db.sqlite3
    SECRET_KEY=your_super_secret_key_change_this_in_production
 3. **Запустите проект:**
-   Эта команда автоматически соберёт образы, создаст структуру базы данных и запустит все сервисы в фоновом режиме.
+   эта команда автоматически соберёт образы, создаст структуру базы данных и запустит все сервисы в фоновом режиме.
    ```bash
    docker compose up --build -d
 4. **Откройте приложение в браузере:**
-   🌐 Основной сайт: http://localhost
-   ⚙️ API документация (Swagger): http://localhost:8000/docs
-   📂 Исходный код: GitHub Репозиторий
+-  🌐 Основной сайт: http://localhost
+-  ⚙️ API документация (Swagger): http://localhost:8000/docs
+-  📂 Исходный код: GitHub Репозиторий
+
+## 🐳 Полезные команды Docker
+-  Просмотр запущенных контейнеров: docker ps
+-  Просмотр логов бэкенда (в реальном времени): docker logs livej_backend -f
+-  Полная остановка проекта: docker compose down
+-  Полная очистка (включая базу данных): docker compose down -v
 
 ## 📂 Структура проекта
-
+   ```text
    project_final/
    ├── livej_fastapi/       # Исходный код бэкенда (FastAPI)
    │   ├── app/             # Роутеры, модели, схемы, настройки
@@ -68,9 +74,3 @@
    ├── docker-compose.yml   # Оркестрация контейнеров
    ├── .env                 # Переменные окружения (локальный)
    └── .gitignore           # Исключения для Git
-
-##  🐳 Полезные команды Docker
-   Просмотр запущенных контейнеров: docker ps
-   Просмотр логов бэкенда (в реальном времени): docker logs livej_backend -f
-   Полная остановка проекта: docker compose down
-   Полная очистка (включая базу данных): docker compose down -v
