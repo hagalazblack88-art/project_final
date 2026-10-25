@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Node / React
+node_modules/
+dist/
+build/
+
+# База данных
+*.sqlite3
+*.db
+data/
+livej_fastapi/data/
+
+# Секреты и окружение
+.env
+.env.local
+.env.*.local
+
+# Alembic (миграции можно не игнорировать, но если хочешь — раскомментируй)
+# alembic/
+
+# IDE
+.vscode/
+.idea/
