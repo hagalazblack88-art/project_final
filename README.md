@@ -63,14 +63,31 @@
 
 ## 📂 Структура проекта
    ```text
-   project_final/
-   ├── livej_fastapi/       # Исходный код бэкенда (FastAPI)
-   │   ├── app/             # Роутеры, модели, схемы, настройки
-   │   ├── alembic/         # Файлы миграций базы данных
-   │   └── Dockerfile       # Инструкции для сборки бэкенда
-   ├── frontend/            # Исходный код фронтенда (React)
-   │   ├── src/             # Компоненты, контекст, API-клиент
-   │   └── Dockerfile       # Инструкции для сборки фронтенда
-   ├── docker-compose.yml   # Оркестрация контейнеров
-   ├── .env                 # Переменные окружения (локальный)
-   └── .gitignore           # Исключения для Git
+project_final/
+── frontend/                        # Исходный код фронтенда (React + TypeScript)
+│   ├── src/                         # Компоненты, контекст, API-клиент
+│   ├── public/                      # Статические файлы (иконки, изображения)
+│   ├── node_modules/                # Зависимости (не загружается в Git)
+│   ├── .gitignore                   # Исключения для Git (фронтенд)
+│   ├── Dockerfile                   # Инструкции для сборки фронтенда
+│   ├── nginx.conf                   # Конфигурация Nginx для production
+│   ├── eslint.config.js             # Настройки линтера
+│   ├── index.html                   # Точка входа приложения
+│   ├── package.json                 # Зависимости и скрипты фронтенда
+│   ├── package-lock.json            # Зафиксированные версии зависимостей
+│   ├── tsconfig.json                # Настройки TypeScript
+│   ├── tsconfig.app.json            # Настройки TypeScript для приложения
+│   ├── tsconfig.node.json           # Настройки TypeScript для Node
+│   └── vite.config.ts               # Конфигурация Vite
+│
+├── livej_fastapi/                   # Исходный код бэкенда (FastAPI)
+│   ├── app/                         # Роутеры, модели, схемы, настройки
+│   ├── alembic/                     # Файлы миграций базы данных
+│   ├── alembic.ini                  # Конфигурация Alembic
+│   ├── Dockerfile                   # Инструкции для сборки бэкенда
+│   └── requirements.txt             # Зависимости Python
+│
+├── .env                             # Переменные окружения (локальный, не в Git)
+├── .gitignore                       # Исключения для Git
+├── docker-compose.yml               # Оркестрация контейнеров
+└── README.md                        # Документация проекта
